@@ -1,6 +1,6 @@
 import MersenneTwister from 'mersenne-twister';
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import BTree, { IMap, defaultComparator, simpleComparator } from '../src/btree';
+import { BTree, IMap, defaultComparator, simpleComparator } from '../src/btree';
 import SortedArray from './sorted-array';
 
 var test: (name: string, f: () => void) => void = it;
