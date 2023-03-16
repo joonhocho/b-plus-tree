@@ -1,9 +1,9 @@
 {
-  "name": "@joonhocho/typescript-esmodule-library-template",
-  "version": "0.0.2",
+  "name": "bplustree-mq4uj",
+  "version": "0.0.1",
   "description": "TypeScript ECMAScript Module Library Template",
   "type": "module",
-  "module": "dist/index.js",
+  "module": "./btree.js",
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w",
@@ -17,14 +17,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/joonhocho/typescript-esmodule-library-template.git"
+    "url": "git+https://github.com/joonhocho/bplustree.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/joonhocho/typescript-esmodule-library-template/issues"
+    "url": "https://github.com/joonhocho/bplustree/issues"
   },
-  "homepage": "https://github.com/joonhocho/typescript-esmodule-library-template#readme",
+  "homepage": "https://github.com/joonhocho/bplustree#readme",
   "devDependencies": {
     "@babel/core": "^7.21.3",
     "@babel/preset-env": "^7.20.2",
