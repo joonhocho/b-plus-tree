@@ -1,6 +1,6 @@
 {
   "name": "bplustree-mq4uj",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "TypeScript ECMAScript Module Library Template",
   "type": "module",
   "module": "./btree.js",
