@@ -323,6 +323,22 @@ export class BTree<K = any, V = any>
     return this._root.get(key, defaultValue, this);
   }
 
+  first(): [K, V] | undefined {
+    const k = this.minKey();
+    if (k === undefined) return undefined;
+    const v = this._root.get(k, undefined, this);
+    if (v === undefined) return undefined;
+    return [k, v];
+  }
+
+  last(): [K, V] | undefined {
+    const k = this.maxKey();
+    if (k === undefined) return undefined;
+    const v = this._root.get(k, undefined, this);
+    if (v === undefined) return undefined;
+    return [k, v];
+  }
+
   /**
    * Adds or overwrites a key-value pair in the B+ tree.
    * @param key the key is used to determine the sort order of
@@ -525,6 +541,8 @@ export class BTree<K = any, V = any>
    *         pairs, to avoid creating a new array on every iteration.
    */
   entries(lowestKey?: K, reusedArray?: (K | V)[]): IterableIterator<[K, V]> {
+    if (this._size === 0) return iterator<[K, V]>();
+
     var info = this.findPath(lowestKey);
     if (info === undefined) return iterator<[K, V]>();
     var { nodequeue, nodeindex, leaf } = info;
@@ -589,6 +607,8 @@ export class BTree<K = any, V = any>
     reusedArray?: (K | V)[],
     skipHighest?: boolean
   ): IterableIterator<[K, V]> {
+    if (this._size === 0) return iterator<[K, V]>();
+
     if (highestKey === undefined) {
       highestKey = this.maxKey();
       skipHighest = undefined;
@@ -1062,14 +1082,15 @@ export class BTree<K = any, V = any>
 
   /** Gets an array filled with the contents of the tree, sorted by key */
   toArray(maxLength: number = 0x7fffffff): [K, V][] {
-    let min = this.minKey(),
-      max = this.maxKey();
-    if (min !== undefined) return this.getRange(min, max!, true, maxLength);
-    return [];
+    if (this._size === 0) return [];
+
+    return this.getRange(this.minKey()!, this.maxKey()!, true, maxLength);
   }
 
   /** Gets an array of all keys, sorted */
   keysArray() {
+    if (this._size === 0) return [];
+
     var results: K[] = [];
     this._root.forRange(
       this.minKey()!,
@@ -1087,6 +1108,8 @@ export class BTree<K = any, V = any>
 
   /** Gets an array of all values, sorted by key */
   valuesArray() {
+    if (this._size === 0) return [];
+
     var results: V[] = [];
     this._root.forRange(
       this.minKey()!,
@@ -1233,6 +1256,22 @@ export class BTree<K = any, V = any>
     return results;
   }
 
+  slice(
+    low?: K,
+    high?: K,
+    includeHigh = high === undefined,
+    maxLength: number = 0x3ffffff
+  ): [K, V][] {
+    if (this._size === 0) return [];
+
+    return this.getRange(
+      low ?? this.minKey()!,
+      high ?? this.maxKey()!,
+      includeHigh,
+      maxLength
+    );
+  }
+
   /** Adds all pairs from a list of key-value pairs.
    * @param pairs Pairs to add to this tree. If there are duplicate keys,
    *        later pairs currently overwrite earlier ones (e.g. [[0,1],[0,7]]
@@ -1281,6 +1320,8 @@ export class BTree<K = any, V = any>
     onFound?: (k: K, v: V, counter: number) => { break?: R } | void,
     initialCounter?: number
   ): R | number {
+    if (this._size === 0) return initialCounter || 0;
+
     var r = this._root.forRange(
       low,
       high,
@@ -1329,6 +1370,8 @@ export class BTree<K = any, V = any>
     onFound: (k: K, v: V, counter: number) => EditRangeResult<V, R> | void,
     initialCounter?: number
   ): R | number {
+    if (this._size === 0) return initialCounter || 0;
+
     var root = this._root;
     if (root.isShared) this._root = root = root.clone();
     try {

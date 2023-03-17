@@ -1250,3 +1250,110 @@ function testBTree(maxNodeSize: number) {
     expect(tree.get(key)).not.toBeUndefined();
   });
 }
+
+describe('new methods', () => {
+  it('empty tree', () => {
+    const numbers = new Array(0).fill(0).map((x) => Math.random());
+    const inputs = numbers.map((x) => [x, x.toString()] as [number, string]);
+    const tree = new BTree(inputs.slice());
+
+    const sorted = inputs.sort((a, b) => a[0] - b[0]);
+
+    expect(tree.size).toEqual(0);
+    expect(tree.toArray()).toEqual(sorted);
+    expect(tree.keysArray()).toEqual(sorted.map((x) => x[0]));
+    expect(tree.valuesArray()).toEqual(sorted.map((x) => x[1]));
+
+    expect(tree.first()).toEqual(sorted[0]);
+    expect(tree.last()).toEqual(sorted[sorted.length - 1]);
+
+    expect(tree.slice()).toEqual(sorted);
+    expect(tree.slice(sorted[0]?.[0], sorted[sorted.length - 1]?.[0])).toEqual(
+      sorted.slice(0, sorted.length - 1)
+    );
+
+    const list: typeof inputs = [];
+    expect(tree.forEach((v, k) => list.push([k, v]))).toBe(0);
+    expect(list).toEqual(sorted);
+
+    expect(tree.filter((k, v) => k > 0.5).toArray()).toEqual(
+      sorted.filter((x) => x[0] > 0.5)
+    );
+    expect(tree.filter((k, v) => k > 0.5).keysArray()).toEqual(
+      sorted.filter((x) => x[0] > 0.5).map((x) => x[0])
+    );
+  });
+
+  it('many numbers', () => {
+    const numbers = new Array(1000).fill(0).map((x) => Math.random());
+    const inputs = numbers.map((x) => [x, x.toString()] as [number, string]);
+    const tree = new BTree(inputs.slice());
+
+    const sorted = inputs.sort((a, b) => a[0] - b[0]);
+
+    expect(tree.size).toEqual(sorted.length);
+    expect(tree.toArray()).toEqual(sorted);
+    expect(tree.keysArray()).toEqual(sorted.map((x) => x[0]));
+    expect(tree.valuesArray()).toEqual(sorted.map((x) => x[1]));
+
+    expect(tree.first()).toEqual(sorted[0]);
+    expect(tree.last()).toEqual(sorted[sorted.length - 1]);
+
+    expect(tree.slice()).toEqual(sorted);
+
+    expect(tree.slice(sorted[10][0])).toEqual(sorted.slice(10));
+
+    expect(tree.slice(sorted[10][0], undefined, false)).toEqual(
+      sorted.slice(10, sorted.length - 1)
+    );
+
+    expect(tree.slice(undefined, sorted[10][0])).toEqual(sorted.slice(0, 10));
+
+    expect(tree.slice(undefined, sorted[10][0], true)).toEqual(
+      sorted.slice(0, 11)
+    );
+
+    expect(tree.slice(sorted[0][0], sorted[sorted.length - 1][0])).toEqual(
+      sorted.slice(0, sorted.length - 1)
+    );
+
+    expect(
+      tree.slice(sorted[0][0], sorted[sorted.length - 1][0], true)
+    ).toEqual(sorted.slice(0, sorted.length));
+
+    expect(tree.slice(sorted[20][0], sorted[40][0])).toEqual(
+      sorted.slice(20, 40)
+    );
+
+    expect(tree.slice(sorted[20][0], sorted[40][0], true)).toEqual(
+      sorted.slice(20, 41)
+    );
+
+    expect(tree.slice(sorted[20][0], sorted[sorted.length - 1][0] + 1)).toEqual(
+      sorted.slice(20)
+    );
+
+    expect(
+      tree.slice(sorted[20][0], sorted[sorted.length - 1][0] + 1, false)
+    ).toEqual(sorted.slice(20));
+
+    expect(
+      tree.slice(sorted[20][0], sorted[sorted.length - 1][0] + 1, true)
+    ).toEqual(sorted.slice(20));
+
+    expect(
+      tree.slice(sorted[0][0] - 1, sorted[sorted.length - 1][0] + 1)
+    ).toEqual(sorted.slice());
+
+    const list: typeof inputs = [];
+    expect(tree.forEach((v, k) => list.push([k, v]))).toBe(1000);
+    expect(list).toEqual(sorted);
+
+    expect(tree.filter((k, v) => k > 0.5).toArray()).toEqual(
+      sorted.filter((x) => x[0] > 0.5)
+    );
+    expect(tree.filter((k, v) => k > 0.5).keysArray()).toEqual(
+      sorted.filter((x) => x[0] > 0.5).map((x) => x[0])
+    );
+  });
+});
